@@ -94,7 +94,7 @@ const ServiceReport = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="bg-gray-50 p-4 rounded">
                 <p className="text-sm text-gray-600">Total Vehicles Serviced</p>
-                <p className="text-2xl font-bold">{report.totalVehiclesServiced}</p>
+                <p className="text-2xl font-bold">{report.totalServiced}</p>
               </div>
               <div className="bg-gray-50 p-4 rounded">
                 <p className="text-sm text-gray-600">Date Range</p>
@@ -103,7 +103,7 @@ const ServiceReport = () => {
             </div>
           </div>
 
-          {report.serviceRecords && report.serviceRecords.length > 0 && (
+          {report.records && report.records.length > 0 && (
             <div className="bg-white p-6 rounded-lg shadow">
               <h2 className="text-xl font-semibold mb-4">Service Records</h2>
               <div className="overflow-x-auto">
@@ -119,14 +119,14 @@ const ServiceReport = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {report.serviceRecords.map((record, index) => (
+                    {report.records.map((record, index) => (
                       <tr key={index} className="border-b">
                         <td className="p-3">{record.id}</td>
-                        <td className="p-3">{record.vehicleName}</td>
-                        <td className="p-3">{record.category}</td>
-                        <td className="p-3">{record.serviceDate}</td>
+                        <td className="p-3">{record.vehicleNumber} ({record.modelName})</td>
+                        <td className="p-3">{record.category?.categoryName || '-'}</td>
+                        <td className="p-3">{record.dateOfSubmission}</td>
                         <td className="p-3">{record.status}</td>
-                        <td className="p-3">{'\u20B9'}{record.charges?.toLocaleString('en-IN')}</td>
+                        <td className="p-3">{'\u20B9'}{record.billAmount?.toLocaleString('en-IN') || '-'}</td>
                       </tr>
                     ))}
                   </tbody>

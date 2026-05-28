@@ -13,8 +13,8 @@ import ProtectedRoute from './components/common/ProtectedRoute';
 import SalesReport from './components/manager/SalesReport';
 import ServiceReport from './components/manager/ServiceReport';
 import RevenueReport from './components/manager/RevenueReport';
-import UpdateVehiclePrices from './components/manager/UpdateVehiclePrices';
-import UpdateServiceCharges from './components/manager/UpdateServiceCharges';
+import AddVehicle from './components/manager/AddVehicle';
+import AddServiceCategory from './components/manager/AddServiceCategory';
 
 // Supervisor components
 import VehiclesForService from './components/supervisor/VehiclesForService';
@@ -49,8 +49,8 @@ function App() {
         <Route path="sales-report" element={<SalesReport />} />
         <Route path="service-report" element={<ServiceReport />} />
         <Route path="revenue" element={<RevenueReport />} />
-        <Route path="vehicle-prices" element={<UpdateVehiclePrices />} />
-        <Route path="service-charges" element={<UpdateServiceCharges />} />
+        <Route path="add-vehicle" element={<AddVehicle />} />
+        <Route path="add-service-category" element={<AddServiceCategory />} />
       </Route>
 
       {/* Supervisor Routes */}

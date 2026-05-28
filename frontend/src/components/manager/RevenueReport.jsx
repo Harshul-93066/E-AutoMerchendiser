@@ -102,13 +102,13 @@ const RevenueReport = () => {
             <div className="bg-white p-6 rounded-lg shadow">
               <h2 className="text-lg font-semibold text-gray-600 mb-2">Sales Revenue</h2>
               <p className="text-3xl font-bold text-indigo-600">
-                {'\u20B9'}{(salesRevenue?.totalRevenue || 0).toLocaleString('en-IN')}
+                {'\u20B9'}{(salesRevenue?.revenue || 0).toLocaleString('en-IN')}
               </p>
             </div>
             <div className="bg-white p-6 rounded-lg shadow">
               <h2 className="text-lg font-semibold text-gray-600 mb-2">Service Revenue</h2>
               <p className="text-3xl font-bold text-green-600">
-                {'\u20B9'}{(serviceRevenue?.totalRevenue || 0).toLocaleString('en-IN')}
+                {'\u20B9'}{(serviceRevenue?.revenue || 0).toLocaleString('en-IN')}
               </p>
             </div>
           </div>
@@ -116,7 +116,7 @@ const RevenueReport = () => {
           <div className="bg-white p-6 rounded-lg shadow mb-6">
             <h2 className="text-lg font-semibold text-gray-600 mb-2">Combined Total Revenue</h2>
             <p className="text-3xl font-bold text-gray-800">
-              {'\u20B9'}{((salesRevenue?.totalRevenue || 0) + (serviceRevenue?.totalRevenue || 0)).toLocaleString('en-IN')}
+              {'\u20B9'}{((salesRevenue?.revenue || 0) + (serviceRevenue?.revenue || 0)).toLocaleString('en-IN')}
             </p>
           </div>
         </>

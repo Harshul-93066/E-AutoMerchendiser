@@ -6,8 +6,8 @@ const links = [
   { path: '/manager/sales-report', label: 'Sales Report' },
   { path: '/manager/service-report', label: 'Service Report' },
   { path: '/manager/revenue', label: 'Revenue' },
-  { path: '/manager/vehicle-prices', label: 'Vehicle Prices' },
-  { path: '/manager/service-charges', label: 'Service Charges' },
+  { path: '/manager/add-vehicle', label: 'Add New Vehicle' },
+  { path: '/manager/add-service-category', label: 'Add Service Category' },
 ];
 
 export default function ManagerDashboard() {

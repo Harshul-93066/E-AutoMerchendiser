@@ -102,7 +102,7 @@ const SalesReport = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="bg-gray-50 p-4 rounded">
               <p className="text-sm text-gray-600">Total Sales Count</p>
-              <p className="text-2xl font-bold">{summary.totalSalesCount}</p>
+              <p className="text-2xl font-bold">{summary.totalSales}</p>
             </div>
             <div className="bg-gray-50 p-4 rounded">
               <p className="text-sm text-gray-600">Period</p>
