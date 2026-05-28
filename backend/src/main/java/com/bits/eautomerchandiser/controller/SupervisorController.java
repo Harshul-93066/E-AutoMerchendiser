@@ -55,8 +55,23 @@ public class SupervisorController {
     }
 
     @GetMapping("/service-status")
-    public ResponseEntity<List<ServiceRecord>> getServiceStatus() {
-        return ResponseEntity.ok(serviceRecordRepository.findAll());
+    public ResponseEntity<List<Map<String, Object>>> getServiceStatus() {
+        List<ServiceRecord> records = serviceRecordRepository.findAll();
+        List<Map<String, Object>> result = new java.util.ArrayList<>();
+        for (ServiceRecord record : records) {
+            Map<String, Object> item = new java.util.HashMap<>();
+            item.put("id", record.getId());
+            item.put("vehicleNumber", record.getVehicleNumber());
+            item.put("modelName", record.getModelName());
+            item.put("make", record.getMake());
+            item.put("status", record.getStatus());
+            item.put("customer", record.getCustomer() != null ? record.getCustomer().getFullName() : null);
+            // Get allocated mechanic
+            var allocation = serviceAllocationRepository.findByServiceRecordId(record.getId());
+            item.put("mechanicName", allocation.map(a -> a.getMechanic().getFullName()).orElse(null));
+            result.add(item);
+        }
+        return ResponseEntity.ok(result);
     }
 
     @PutMapping("/approve/{id}")

@@ -13,8 +13,8 @@ export default function Navbar() {
   return (
     <nav className="bg-indigo-700 text-white shadow-lg">
       <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-        <Link to="/dashboard" className="text-xl font-bold">
-          e-AutoMerchandiser
+        <Link to="/dashboard" className="flex items-center gap-2">
+          <img src="/logo.png" alt="Merch Guru" className="h-16 w-auto" />
         </Link>
         {user && (
           <div className="flex items-center gap-4">

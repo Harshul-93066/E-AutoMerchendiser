@@ -6,7 +6,8 @@ const links = [
   { path: '/clerk/upload-service', label: 'Upload Service Info' },
   { path: '/clerk/sales', label: 'Record Sale' },
   { path: '/clerk/delivery', label: 'Delivery Details' },
-  { path: '/clerk/generate-bill', label: 'Generate Bill' },
+  { path: '/clerk/generate-bill', label: 'Generate Service Bill' },
+  { path: '/clerk/generate-sales-bill', label: 'Generate Sales Bill' },
 ];
 
 export default function ClerkDashboard() {

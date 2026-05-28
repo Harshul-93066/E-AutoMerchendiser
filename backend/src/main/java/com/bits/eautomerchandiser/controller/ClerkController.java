@@ -60,7 +60,9 @@ public class ClerkController {
                 .orElseThrow(() -> new RuntimeException("Service record not found"));
 
         double amount = 0;
-        if (record.getCategory() != null) {
+        if (record.getBillAmount() != null && record.getBillAmount() > 0) {
+            amount = record.getBillAmount();
+        } else if (record.getCategory() != null && record.getCategory().getCharges() != null) {
             amount = record.getCategory().getCharges();
         }
         record.setBillAmount(amount);
@@ -143,7 +145,16 @@ public class ClerkController {
 
     @GetMapping("/sales")
     public ResponseEntity<List<SalesTransaction>> getAllSales() {
-        return ResponseEntity.ok(salesTransactionRepository.findAll());
+        List<SalesTransaction> allSales = salesTransactionRepository.findAll();
+        List<DeliveryRecord> deliveries = deliveryRecordRepository.findAll();
+        java.util.Set<Long> deliveredSaleIds = deliveries.stream()
+                .filter(d -> d.getSalesTransaction() != null)
+                .map(d -> d.getSalesTransaction().getId())
+                .collect(java.util.stream.Collectors.toSet());
+        List<SalesTransaction> available = allSales.stream()
+                .filter(s -> !deliveredSaleIds.contains(s.getId()))
+                .collect(java.util.stream.Collectors.toList());
+        return ResponseEntity.ok(available);
     }
 
     @GetMapping("/vehicle-models")
@@ -159,5 +170,30 @@ public class ClerkController {
     @GetMapping("/customers")
     public ResponseEntity<List<User>> getCustomers() {
         return ResponseEntity.ok(userRepository.findByRole(Role.CUSTOMER));
+    }
+
+    @GetMapping("/sales/all")
+    public ResponseEntity<List<SalesTransaction>> getAllSalesForBill() {
+        return ResponseEntity.ok(salesTransactionRepository.findAll());
+    }
+
+    @GetMapping("/sales/{id}/bill")
+    public ResponseEntity<Map<String, Object>> generateSalesBill(@PathVariable Long id) {
+        SalesTransaction sale = salesTransactionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Sales transaction not found"));
+
+        Map<String, Object> bill = new HashMap<>();
+        bill.put("saleId", sale.getId());
+        bill.put("customerName", sale.getCustomerName());
+        bill.put("customerPhone", sale.getCustomerPhone());
+        bill.put("vehicleNumber", sale.getVehicleNumber());
+        bill.put("modelName", sale.getVehicleModel() != null ? sale.getVehicleModel().getModelName() : "N/A");
+        bill.put("make", sale.getVehicleModel() != null ? sale.getVehicleModel().getMake() : "N/A");
+        bill.put("variant", sale.getVehicleModel() != null ? sale.getVehicleModel().getVariant() : "N/A");
+        bill.put("salePrice", sale.getSalePrice());
+        bill.put("saleDate", sale.getSaleDate());
+        bill.put("recordedBy", sale.getRecordedBy() != null ? sale.getRecordedBy().getFullName() : "N/A");
+
+        return ResponseEntity.ok(bill);
     }
 }

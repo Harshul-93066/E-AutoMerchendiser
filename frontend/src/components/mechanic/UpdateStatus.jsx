@@ -8,6 +8,7 @@ const UpdateStatus = () => {
   const [statusValues, setStatusValues] = useState({});
   const [workDescriptions, setWorkDescriptions] = useState({});
   const [messages, setMessages] = useState({});
+  const [confirmDialog, setConfirmDialog] = useState({ open: false, serviceRecordId: null });
 
   useEffect(() => {
     fetchAllocatedVehicles();
@@ -15,7 +16,7 @@ const UpdateStatus = () => {
 
   const fetchAllocatedVehicles = async () => {
     try {
-      const response = await api.get('/mechanic/allocated');
+      const response = await api.get('/mechanic/active');
       setAllocations(response.data);
       const initialStatus = {};
       const initialWork = {};
@@ -40,39 +41,34 @@ const UpdateStatus = () => {
     setWorkDescriptions((prev) => ({ ...prev, [serviceRecordId]: value }));
   };
 
-  const updateStatus = async (serviceRecordId) => {
+  const handleUpdate = async (serviceRecordId) => {
+    if (statusValues[serviceRecordId] === 'SERVICED' && !workDescriptions[serviceRecordId]?.trim()) {
+      setMessages((prev) => ({
+        ...prev,
+        [serviceRecordId]: { type: 'error', text: 'Work description is mandatory when marking as SERVICED.' },
+      }));
+      return;
+    }
+    if (statusValues[serviceRecordId] === 'SERVICED') {
+      setConfirmDialog({ open: true, serviceRecordId });
+      return;
+    }
+    await performUpdate(serviceRecordId);
+  };
+
+  const performUpdate = async (serviceRecordId) => {
     try {
       await api.put(`/mechanic/service-records/${serviceRecordId}/status`, {
         status: statusValues[serviceRecordId],
       });
-      setMessages((prev) => ({
-        ...prev,
-        [serviceRecordId]: { type: 'success', text: 'Status updated successfully!' },
-      }));
-      setTimeout(() => {
-        setMessages((prev) => {
-          const updated = { ...prev };
-          delete updated[serviceRecordId];
-          return updated;
-        });
-      }, 3000);
-    } catch (err) {
-      setMessages((prev) => ({
-        ...prev,
-        [serviceRecordId]: { type: 'error', text: 'Failed to update status.' },
-      }));
-    }
-  };
-
-  const updateWorkInfo = async (serviceRecordId) => {
-    try {
       await api.put(`/mechanic/service-records/${serviceRecordId}/work-info`, {
         workDescription: workDescriptions[serviceRecordId],
       });
       setMessages((prev) => ({
         ...prev,
-        [serviceRecordId]: { type: 'success', text: 'Work description updated successfully!' },
+        [serviceRecordId]: { type: 'success', text: 'Updated successfully!' },
       }));
+      fetchAllocatedVehicles();
       setTimeout(() => {
         setMessages((prev) => {
           const updated = { ...prev };
@@ -83,9 +79,19 @@ const UpdateStatus = () => {
     } catch (err) {
       setMessages((prev) => ({
         ...prev,
-        [serviceRecordId]: { type: 'error', text: 'Failed to update work description.' },
+        [serviceRecordId]: { type: 'error', text: 'Failed to update.' },
       }));
     }
+  };
+
+  const handleConfirmOk = async () => {
+    const { serviceRecordId } = confirmDialog;
+    setConfirmDialog({ open: false, serviceRecordId: null });
+    await performUpdate(serviceRecordId);
+  };
+
+  const handleConfirmCancel = () => {
+    setConfirmDialog({ open: false, serviceRecordId: null });
   };
 
   if (loading) {
@@ -116,7 +122,9 @@ const UpdateStatus = () => {
               </tr>
             </thead>
             <tbody>
-              {allocations.map((item) => (
+              {allocations.map((item) => {
+                const isServiced = item.serviceRecord.status === 'SERVICED';
+                return (
                 <tr key={item.serviceRecord.id} className="border-b border-gray-200 hover:bg-gray-50">
                   <td className="p-3">{item.serviceRecord.id}</td>
                   <td className="p-3">{item.serviceRecord.vehicleNumber}</td>
@@ -127,8 +135,9 @@ const UpdateStatus = () => {
                       className="border border-gray-300 rounded px-2 py-1 w-full"
                       value={statusValues[item.serviceRecord.id] || ''}
                       onChange={(e) => handleStatusChange(item.serviceRecord.id, e.target.value)}
+                      disabled={isServiced}
                     >
-                      <option value="NOT_ATTENDED">NOT_ATTENDED</option>
+                      <option value="ALLOCATED">ALLOCATED</option>
                       <option value="UNDER_SERVICING">UNDER_SERVICING</option>
                       <option value="SERVICED">SERVICED</option>
                     </select>
@@ -140,23 +149,20 @@ const UpdateStatus = () => {
                       value={workDescriptions[item.serviceRecord.id] || ''}
                       onChange={(e) => handleWorkDescriptionChange(item.serviceRecord.id, e.target.value)}
                       placeholder="Enter work description..."
+                      disabled={isServiced}
                     />
                   </td>
                   <td className="p-3">
-                    <div className="flex flex-col gap-2">
+                    {isServiced ? (
+                      <span className="text-green-600 font-medium text-sm">Completed</span>
+                    ) : (
                       <button
-                        onClick={() => updateStatus(item.serviceRecord.id)}
-                        className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 text-sm"
+                        onClick={() => handleUpdate(item.serviceRecord.id)}
+                        className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 text-sm"
                       >
-                        Update Status
+                        Update
                       </button>
-                      <button
-                        onClick={() => updateWorkInfo(item.serviceRecord.id)}
-                        className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 text-sm"
-                      >
-                        Update Work Info
-                      </button>
-                    </div>
+                    )}
                     {messages[item.serviceRecord.id] && (
                       <p
                         className={`mt-2 text-sm ${
@@ -170,9 +176,43 @@ const UpdateStatus = () => {
                     )}
                   </td>
                 </tr>
-              ))}
+                );
+              })}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {/* Confirmation Dialog */}
+      {confirmDialog.open && (
+        <div className="fixed inset-0 backdrop-blur-sm bg-black/30 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4">
+            <div className="flex items-center mb-4">
+              <div className="w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center mr-3">
+                <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-800">Confirm Status Change</h3>
+            </div>
+            <p className="text-gray-600 mb-6">
+              Are you sure you want to mark this vehicle as <span className="font-semibold text-indigo-600">SERVICED</span>? This action cannot be undone.
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={handleConfirmCancel}
+                className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 font-medium"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirmOk}
+                className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium"
+              >
+                OK, Confirm
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

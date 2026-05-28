@@ -52,12 +52,13 @@ const ServiceStatus = () => {
               <th className="border p-2 text-left">Model</th>
               <th className="border p-2 text-left">Status</th>
               <th className="border p-2 text-left">Customer</th>
+              <th className="border p-2 text-left">Allocated To</th>
             </tr>
           </thead>
           <tbody>
             {serviceRecords.length === 0 ? (
               <tr>
-                <td colSpan="5" className="border p-2 text-center text-gray-500">
+                <td colSpan="6" className="border p-2 text-center text-gray-500">
                   No records found.
                 </td>
               </tr>
@@ -76,7 +77,8 @@ const ServiceStatus = () => {
                       {record.status?.replace(/_/g, ' ')}
                     </span>
                   </td>
-                  <td className="border p-2">{record.customer?.fullName || '-'}</td>
+                  <td className="border p-2">{record.customer || '-'}</td>
+                  <td className="border p-2">{record.mechanicName || '-'}</td>
                 </tr>
               ))
             )}

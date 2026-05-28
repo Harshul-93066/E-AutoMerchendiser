@@ -24,6 +24,12 @@ public class MechanicController {
     @GetMapping("/allocated")
     public ResponseEntity<List<ServiceAllocation>> getAllocatedVehicles(Authentication auth) {
         Long mechanicId = (Long) auth.getCredentials();
+        return ResponseEntity.ok(serviceAllocationRepository.findAllByMechanicId(mechanicId));
+    }
+
+    @GetMapping("/active")
+    public ResponseEntity<List<ServiceAllocation>> getActiveVehicles(Authentication auth) {
+        Long mechanicId = (Long) auth.getCredentials();
         return ResponseEntity.ok(serviceAllocationRepository.findActiveByMechanicId(mechanicId));
     }
 

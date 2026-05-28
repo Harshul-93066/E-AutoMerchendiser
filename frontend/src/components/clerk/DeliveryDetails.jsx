@@ -7,7 +7,6 @@ const DeliveryDetails = () => {
     serviceRecordId: '',
     salesTransactionId: '',
     deliveryDate: '',
-    deliveredTo: '',
     remarks: '',
   });
 
@@ -44,7 +43,6 @@ const DeliveryDetails = () => {
     const payload = {
       type: formData.type,
       deliveryDate: formData.deliveryDate,
-      deliveredTo: formData.deliveredTo,
       remarks: formData.remarks,
     };
 
@@ -62,7 +60,6 @@ const DeliveryDetails = () => {
         serviceRecordId: '',
         salesTransactionId: '',
         deliveryDate: '',
-        deliveredTo: '',
         remarks: '',
       });
     } catch (error) {
@@ -145,18 +142,6 @@ const DeliveryDetails = () => {
             type="date"
             name="deliveryDate"
             value={formData.deliveryDate}
-            onChange={handleChange}
-            required
-            className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Delivered To</label>
-          <input
-            type="text"
-            name="deliveredTo"
-            value={formData.deliveredTo}
             onChange={handleChange}
             required
             className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"

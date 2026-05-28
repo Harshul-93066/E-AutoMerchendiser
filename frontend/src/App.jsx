@@ -28,6 +28,7 @@ import UploadServiceInfo from './components/clerk/UploadServiceInfo';
 import RecordSale from './components/clerk/RecordSale';
 import DeliveryDetails from './components/clerk/DeliveryDetails';
 import GenerateBill from './components/clerk/GenerateBill';
+import GenerateSalesBill from './components/clerk/GenerateSalesBill';
 
 // Mechanic components
 import AllocatedVehicles from './components/mechanic/AllocatedVehicles';
@@ -45,7 +46,7 @@ function App() {
 
       {/* Manager Routes */}
       <Route path="/manager" element={<ProtectedRoute allowedRoles={['MANAGER']}><ManagerDashboard /></ProtectedRoute>}>
-        <Route index element={<SalesReport />} />
+        <Route index element={<Navigate to="/manager/sales-report" replace />} />
         <Route path="sales-report" element={<SalesReport />} />
         <Route path="service-report" element={<ServiceReport />} />
         <Route path="revenue" element={<RevenueReport />} />
@@ -55,7 +56,7 @@ function App() {
 
       {/* Supervisor Routes */}
       <Route path="/supervisor" element={<ProtectedRoute allowedRoles={['SUPERVISOR']}><SupervisorDashboard /></ProtectedRoute>}>
-        <Route index element={<VehiclesForService />} />
+        <Route index element={<Navigate to="/supervisor/vehicles" replace />} />
         <Route path="vehicles" element={<VehiclesForService />} />
         <Route path="allocate" element={<AllocateVehicle />} />
         <Route path="status" element={<ServiceStatus />} />
@@ -65,23 +66,24 @@ function App() {
 
       {/* Clerk Routes */}
       <Route path="/clerk" element={<ProtectedRoute allowedRoles={['CLERK']}><ClerkDashboard /></ProtectedRoute>}>
-        <Route index element={<UploadServiceInfo />} />
+        <Route index element={<Navigate to="/clerk/upload-service" replace />} />
         <Route path="upload-service" element={<UploadServiceInfo />} />
         <Route path="sales" element={<RecordSale />} />
         <Route path="delivery" element={<DeliveryDetails />} />
         <Route path="generate-bill" element={<GenerateBill />} />
+        <Route path="generate-sales-bill" element={<GenerateSalesBill />} />
       </Route>
 
       {/* Mechanic Routes */}
       <Route path="/mechanic" element={<ProtectedRoute allowedRoles={['MECHANIC']}><MechanicDashboard /></ProtectedRoute>}>
-        <Route index element={<AllocatedVehicles />} />
+        <Route index element={<Navigate to="/mechanic/allocated" replace />} />
         <Route path="allocated" element={<AllocatedVehicles />} />
         <Route path="update-status" element={<UpdateStatus />} />
       </Route>
 
       {/* Customer Routes */}
       <Route path="/customer" element={<ProtectedRoute allowedRoles={['CUSTOMER']}><CustomerDashboard /></ProtectedRoute>}>
-        <Route index element={<VehicleStatus />} />
+        <Route index element={<Navigate to="/customer/vehicle-status" replace />} />
         <Route path="vehicle-status" element={<VehicleStatus />} />
       </Route>
 

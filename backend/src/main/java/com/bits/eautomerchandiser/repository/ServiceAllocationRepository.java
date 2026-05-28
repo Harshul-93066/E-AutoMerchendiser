@@ -16,8 +16,11 @@ public interface ServiceAllocationRepository extends JpaRepository<ServiceAlloca
 
     Optional<ServiceAllocation> findByServiceRecordId(Long serviceRecordId);
 
-    @Query("SELECT sa FROM ServiceAllocation sa WHERE sa.mechanic.id = :mechanicId AND sa.serviceRecord.status != 'DELIVERED'")
+    @Query("SELECT sa FROM ServiceAllocation sa JOIN FETCH sa.serviceRecord JOIN FETCH sa.mechanic WHERE sa.mechanic.id = :mechanicId AND sa.serviceRecord.status NOT IN ('DELIVERED', 'SERVICED', 'APPROVED_FOR_DELIVERY')")
     List<ServiceAllocation> findActiveByMechanicId(@Param("mechanicId") Long mechanicId);
+
+    @Query("SELECT sa FROM ServiceAllocation sa JOIN FETCH sa.serviceRecord JOIN FETCH sa.mechanic WHERE sa.mechanic.id = :mechanicId")
+    List<ServiceAllocation> findAllByMechanicId(@Param("mechanicId") Long mechanicId);
 
     @Query("SELECT sa.mechanic.fullName, COUNT(sa) FROM ServiceAllocation sa GROUP BY sa.mechanic.id, sa.mechanic.fullName")
     List<Object[]> getMechanicWiseServiceCount();

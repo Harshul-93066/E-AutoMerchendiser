@@ -18,11 +18,18 @@ const UploadServiceInfo = () => {
   const [purchases, setPurchases] = useState([]);
   const [message, setMessage] = useState({ text: '', type: '' });
   const [loading, setLoading] = useState(false);
+  const [showAddCustomer, setShowAddCustomer] = useState(false);
+  const [newCustomer, setNewCustomer] = useState({ fullName: '', email: '', phone: '', password: '' });
+  const [addingCustomer, setAddingCustomer] = useState(false);
+
+  const fetchCustomers = () => {
+    api.get('/clerk/customers').then(res => setCustomers(res.data)).catch(() => {});
+  };
 
   useEffect(() => {
-    api.get('/clerk/customers').then(res => setCustomers(res.data)).catch(() => {});
+    fetchCustomers();
     api.get('/clerk/service-categories').then(res => setCategories(res.data)).catch(() => {});
-    api.get('/clerk/sales').then(res => setPurchases(res.data)).catch(() => {});
+    api.get('/clerk/sales/all').then(res => setPurchases(res.data)).catch(() => {});
   }, []);
 
   const handleChange = (e) => {
@@ -58,6 +65,26 @@ const UploadServiceInfo = () => {
       setMessage({ text: error.response?.data?.message || 'Failed to create service record.', type: 'error' });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleAddCustomer = async (e) => {
+    e.preventDefault();
+    if (!newCustomer.fullName || !newCustomer.email || !newCustomer.password) {
+      setMessage({ text: 'Name, email and password are required.', type: 'error' });
+      return;
+    }
+    setAddingCustomer(true);
+    try {
+      await api.post('/auth/register', { ...newCustomer, role: 'CUSTOMER' });
+      setMessage({ text: 'Customer added successfully!', type: 'success' });
+      setNewCustomer({ fullName: '', email: '', phone: '', password: '' });
+      setShowAddCustomer(false);
+      fetchCustomers();
+    } catch (error) {
+      setMessage({ text: error.response?.data?.message || 'Failed to add customer.', type: 'error' });
+    } finally {
+      setAddingCustomer(false);
     }
   };
 
@@ -110,7 +137,38 @@ const UploadServiceInfo = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Customer</label>
+          <div className="flex items-center justify-between mb-1">
+            <label className="block text-sm font-medium text-gray-700">Customer</label>
+            <button type="button" onClick={() => setShowAddCustomer(!showAddCustomer)}
+              className="text-sm text-indigo-600 hover:text-indigo-800 font-medium">
+              {showAddCustomer ? '✕ Cancel' : '+ Add New Customer'}
+            </button>
+          </div>
+
+          {showAddCustomer && (
+            <div className="mb-3 p-3 border border-indigo-200 rounded bg-indigo-50">
+              <p className="text-sm font-medium text-indigo-700 mb-2">Quick Add Customer</p>
+              <div className="grid grid-cols-2 gap-2 mb-2">
+                <input type="text" placeholder="Full Name *" value={newCustomer.fullName}
+                  onChange={e => setNewCustomer(prev => ({ ...prev, fullName: e.target.value }))}
+                  className="border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500" />
+                <input type="email" placeholder="Email *" value={newCustomer.email}
+                  onChange={e => setNewCustomer(prev => ({ ...prev, email: e.target.value }))}
+                  className="border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500" />
+                <input type="text" placeholder="Phone" value={newCustomer.phone}
+                  onChange={e => setNewCustomer(prev => ({ ...prev, phone: e.target.value }))}
+                  className="border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500" />
+                <input type="password" placeholder="Password *" value={newCustomer.password}
+                  onChange={e => setNewCustomer(prev => ({ ...prev, password: e.target.value }))}
+                  className="border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500" />
+              </div>
+              <button type="button" onClick={handleAddCustomer} disabled={addingCustomer || !newCustomer.fullName || !newCustomer.email || !newCustomer.password}
+                className="bg-indigo-600 text-white px-3 py-1 rounded text-sm hover:bg-indigo-700 disabled:opacity-50">
+                {addingCustomer ? 'Adding...' : 'Add Customer'}
+              </button>
+            </div>
+          )}
+
           <select name="customerId" value={formData.customerId} onChange={handleChange} required
             className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
             <option value="">Select a customer</option>

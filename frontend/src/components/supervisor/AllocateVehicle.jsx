@@ -137,7 +137,7 @@ const AllocateVehicle = () => {
                 <option value="">Select a mechanic</option>
                 {mechanics.map((mechanic) => (
                   <option key={mechanic.id} value={mechanic.id}>
-                    {mechanic.name}
+                    {mechanic.fullName}
                   </option>
                 ))}
               </select>

@@ -40,10 +40,9 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-lg">
-        <h1 className="text-2xl font-bold text-center text-indigo-700 mb-1">
-          e-AutoMerchandiser
-        </h1>
-        <p className="text-center text-gray-500 text-sm mb-6">2-Wheeler Showroom & Service Center</p>
+        <div className="flex justify-center mb-4">
+          <img src="/logo.png" alt="Merch Guru" className="h-48 w-auto" />
+        </div>
 
         {/* Role Selection */}
         <p className="text-sm font-medium text-gray-600 mb-3 text-center">Select your role to continue</p>
