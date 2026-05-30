@@ -3,6 +3,7 @@ import Navbar from '../components/common/Navbar';
 import Sidebar from '../components/common/Sidebar';
 
 const links = [
+  { path: '/manager', label: 'Home', end: true },
   { path: '/manager/sales-report', label: 'Sales Report' },
   { path: '/manager/service-report', label: 'Service Report' },
   { path: '/manager/revenue', label: 'Revenue' },

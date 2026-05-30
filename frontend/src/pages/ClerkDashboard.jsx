@@ -3,6 +3,7 @@ import Navbar from '../components/common/Navbar';
 import Sidebar from '../components/common/Sidebar';
 
 const links = [
+  { path: '/clerk', label: 'Home', end: true },
   { path: '/clerk/upload-service', label: 'Upload Service Info' },
   { path: '/clerk/sales', label: 'Record Sale' },
   { path: '/clerk/delivery', label: 'Delivery Details' },

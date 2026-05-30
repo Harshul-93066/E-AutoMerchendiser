@@ -3,6 +3,7 @@ import Navbar from '../components/common/Navbar';
 import Sidebar from '../components/common/Sidebar';
 
 const links = [
+  { path: '/supervisor', label: 'Home', end: true },
   { path: '/supervisor/vehicles', label: 'Vehicles for Service' },
   { path: '/supervisor/allocate', label: 'Allocate to Mechanic' },
   { path: '/supervisor/status', label: 'Service Status' },

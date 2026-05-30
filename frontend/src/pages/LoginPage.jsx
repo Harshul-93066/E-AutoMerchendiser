@@ -38,14 +38,14 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-lg">
+    <div className="min-h-screen flex items-center justify-center bg-[#1a1a2e]">
+      <div className="bg-[#16213e] p-6 rounded-lg shadow-lg border border-gray-700 w-full max-w-xl">
         <div className="flex justify-center mb-4">
           <img src="/logo.png" alt="Merch Guru" className="h-48 w-auto" />
         </div>
 
         {/* Role Selection */}
-        <p className="text-sm font-medium text-gray-600 mb-3 text-center">Select your role to continue</p>
+        <p className="text-sm font-medium text-gray-400 mb-3 text-center">Select your role to continue</p>
         <div className="grid grid-cols-5 gap-2 mb-6">
           {ROLES.map((r) => (
             <button
@@ -67,38 +67,38 @@ export default function LoginPage() {
         {selectedRole && (
           <>
             <div className="text-center mb-4">
-              <span className="text-sm text-gray-500">Logging in as </span>
-              <span className="font-semibold text-indigo-700">{selectedRole.label}</span>
+              <span className="text-sm text-gray-400">Logging in as </span>
+              <span className="font-semibold text-purple-400">{selectedRole.label}</span>
             </div>
 
             {error && (
-              <div className="bg-red-100 text-red-700 px-4 py-2 rounded mb-4 text-sm">{error}</div>
+              <div className="bg-red-100 text-red-700 px-5 py-2 rounded mb-4 text-sm">{error}</div>
             )}
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <label className="block text-sm font-medium text-gray-300 mb-1">Email</label>
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full border border-gray-600 rounded bg-[#0f3460] text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                <label className="block text-sm font-medium text-gray-300 mb-1">Password</label>
                 <input
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full border border-gray-600 rounded bg-[#0f3460] text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
                   required
                 />
               </div>
               <button
                 type="submit"
-                className="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700 transition"
+                className="w-full bg-purple-700 text-white py-2 rounded hover:bg-purple-900 transition"
               >
                 Login as {selectedRole.label}
               </button>
@@ -106,9 +106,9 @@ export default function LoginPage() {
           </>
         )}
 
-        <p className="text-center mt-4 text-sm text-gray-600">
+        <p className="text-center mt-4 text-sm text-gray-400">
           Don't have an account?{' '}
-          <Link to="/register" className="text-indigo-600 hover:underline">
+          <Link to="/register" className="text-purple-400 hover:underline">
             Register
           </Link>
         </p>

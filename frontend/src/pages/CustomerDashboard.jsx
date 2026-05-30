@@ -3,6 +3,7 @@ import Navbar from '../components/common/Navbar';
 import Sidebar from '../components/common/Sidebar';
 
 const links = [
+  { path: '/customer', label: 'Home', end: true },
   { path: '/customer/vehicle-status', label: 'Vehicle Status' },
 ];
 

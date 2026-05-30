@@ -3,6 +3,7 @@ import Navbar from '../components/common/Navbar';
 import Sidebar from '../components/common/Sidebar';
 
 const links = [
+  { path: '/mechanic', label: 'Home', end: true },
   { path: '/mechanic/allocated', label: 'Allocated Vehicles' },
   { path: '/mechanic/update-status', label: 'Update Status' },
 ];

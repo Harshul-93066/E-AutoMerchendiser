@@ -8,6 +8,7 @@ export default function Sidebar({ links }) {
           <NavLink
             key={link.path}
             to={link.path}
+            end={link.end}
             className={({ isActive }) =>
               `block px-4 py-2 rounded transition ${
                 isActive ? 'bg-indigo-600' : 'hover:bg-gray-700'
