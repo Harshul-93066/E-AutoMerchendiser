@@ -2,8 +2,7 @@ package com.bits.eautomerchandiser.controller;
 
 import com.bits.eautomerchandiser.model.ServiceCategory;
 import com.bits.eautomerchandiser.model.VehicleModel;
-import com.bits.eautomerchandiser.repository.ServiceCategoryRepository;
-import com.bits.eautomerchandiser.repository.VehicleModelRepository;
+import com.bits.eautomerchandiser.service.ManagerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,42 +15,35 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ManagerController {
 
-    private final VehicleModelRepository vehicleModelRepository;
-    private final ServiceCategoryRepository serviceCategoryRepository;
+    private final ManagerService managerService;
 
     @GetMapping("/vehicle-models")
     public ResponseEntity<List<VehicleModel>> getVehicleModels() {
-        return ResponseEntity.ok(vehicleModelRepository.findAll());
+        return ResponseEntity.ok(managerService.getAllVehicleModels());
     }
 
     @PutMapping("/vehicle-models/{id}/price")
     public ResponseEntity<VehicleModel> updateVehiclePrice(@PathVariable Long id, @RequestBody Map<String, Double> body) {
-        VehicleModel model = vehicleModelRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Vehicle model not found"));
-        model.setPrice(body.get("price"));
-        return ResponseEntity.ok(vehicleModelRepository.save(model));
+        return ResponseEntity.ok(managerService.updateVehiclePrice(id, body.get("price")));
     }
 
     @GetMapping("/service-categories")
     public ResponseEntity<List<ServiceCategory>> getServiceCategories() {
-        return ResponseEntity.ok(serviceCategoryRepository.findAll());
+        return ResponseEntity.ok(managerService.getAllServiceCategories());
     }
 
     @PutMapping("/service-categories/{id}/charges")
     public ResponseEntity<ServiceCategory> updateServiceCharges(@PathVariable Long id, @RequestBody Map<String, Double> body) {
-        ServiceCategory category = serviceCategoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Service category not found"));
-        category.setCharges(body.get("charges"));
-        return ResponseEntity.ok(serviceCategoryRepository.save(category));
+        return ResponseEntity.ok(managerService.updateServiceCharges(id, body.get("charges")));
     }
 
     @PostMapping("/vehicle-models")
     public ResponseEntity<VehicleModel> addVehicleModel(@RequestBody VehicleModel model) {
-        return ResponseEntity.ok(vehicleModelRepository.save(model));
+        return ResponseEntity.ok(managerService.addVehicleModel(model));
     }
 
     @PostMapping("/service-categories")
     public ResponseEntity<ServiceCategory> addServiceCategory(@RequestBody ServiceCategory category) {
-        return ResponseEntity.ok(serviceCategoryRepository.save(category));
+        return ResponseEntity.ok(managerService.addServiceCategory(category));
     }
 }
