@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../api/axiosConfig';
+import ConfirmDialog from '../common/ConfirmDialog';
 
 const AddServiceCategory = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [deletingId, setDeletingId] = useState(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState(null);
   const [form, setForm] = useState({
     categoryName: '',
     description: '',
@@ -53,6 +56,22 @@ const AddServiceCategory = () => {
       setTimeout(() => setSuccess(''), 3000);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to add service category');
+    }
+  };
+
+  const handleDelete = async (id) => {
+    setError('');
+    setSuccess('');
+    setDeletingId(id);
+    try {
+      await api.delete(`/manager/service-categories/${id}`);
+      setSuccess('Service category deleted successfully!');
+      fetchCategories();
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to delete service category');
+    } finally {
+      setDeletingId(null);
+      setConfirmDeleteId(null);
     }
   };
 
@@ -125,6 +144,7 @@ const AddServiceCategory = () => {
                   <th className="p-3 text-left">Category Name</th>
                   <th className="p-3 text-left">Description</th>
                   <th className="p-3 text-left">Charges</th>
+                  <th className="p-3 text-left">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -134,6 +154,15 @@ const AddServiceCategory = () => {
                     <td className="p-3">{category.categoryName}</td>
                     <td className="p-3">{category.description}</td>
                     <td className="p-3">{'\u20B9'}{category.charges?.toLocaleString('en-IN')}</td>
+                    <td className="p-3">
+                      <button
+                        onClick={() => setConfirmDeleteId(category.id)}
+                        disabled={deletingId === category.id}
+                        className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 disabled:opacity-50"
+                      >
+                        {deletingId === category.id ? 'Deleting...' : 'Delete'}
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -141,6 +170,16 @@ const AddServiceCategory = () => {
           </div>
         )}
       </div>
+
+      <ConfirmDialog
+        open={confirmDeleteId !== null}
+        title="Delete Service Category"
+        message="Are you sure you want to delete this service category? This action cannot be undone."
+        onCancel={() => setConfirmDeleteId(null)}
+        onConfirm={() => handleDelete(confirmDeleteId)}
+        confirmText="Delete"
+        loading={deletingId !== null}
+      />
     </div>
   );
 };

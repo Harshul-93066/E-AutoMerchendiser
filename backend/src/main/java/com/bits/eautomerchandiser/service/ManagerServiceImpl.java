@@ -5,6 +5,7 @@ import com.bits.eautomerchandiser.model.VehicleModel;
 import com.bits.eautomerchandiser.repository.ServiceCategoryRepository;
 import com.bits.eautomerchandiser.repository.VehicleModelRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,11 +31,15 @@ public class ManagerServiceImpl implements ManagerService {
 
     @Override
     @Transactional
-    public VehicleModel updateVehiclePrice(Long id, Double price) {
-        VehicleModel model = vehicleModelRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Vehicle model not found"));
-        model.setPrice(price);
-        return vehicleModelRepository.save(model);
+    public void deleteVehicleModel(Long id) {
+        if (!vehicleModelRepository.existsById(id)) {
+            throw new RuntimeException("Vehicle model not found");
+        }
+        try {
+            vehicleModelRepository.deleteById(id);
+        } catch (DataIntegrityViolationException ex) {
+            throw new RuntimeException("Vehicle model is in use and cannot be deleted");
+        }
     }
 
     @Override
@@ -50,10 +55,14 @@ public class ManagerServiceImpl implements ManagerService {
 
     @Override
     @Transactional
-    public ServiceCategory updateServiceCharges(Long id, Double charges) {
-        ServiceCategory category = serviceCategoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Service category not found"));
-        category.setCharges(charges);
-        return serviceCategoryRepository.save(category);
+    public void deleteServiceCategory(Long id) {
+        if (!serviceCategoryRepository.existsById(id)) {
+            throw new RuntimeException("Service category not found");
+        }
+        try {
+            serviceCategoryRepository.deleteById(id);
+        } catch (DataIntegrityViolationException ex) {
+            throw new RuntimeException("Service category is in use and cannot be deleted");
+        }
     }
 }

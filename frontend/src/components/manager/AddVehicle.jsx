@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../api/axiosConfig';
+import ConfirmDialog from '../common/ConfirmDialog';
 
 const AddVehicle = () => {
   const [vehicleModels, setVehicleModels] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [deletingId, setDeletingId] = useState(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState(null);
   const [form, setForm] = useState({
     modelName: '',
     make: '',
@@ -59,6 +62,22 @@ const AddVehicle = () => {
       setTimeout(() => setSuccess(''), 3000);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to add vehicle model');
+    }
+  };
+
+  const handleDelete = async (id) => {
+    setError('');
+    setSuccess('');
+    setDeletingId(id);
+    try {
+      await api.delete(`/manager/vehicle-models/${id}`);
+      setSuccess('Vehicle model deleted successfully!');
+      fetchVehicleModels();
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to delete vehicle model');
+    } finally {
+      setDeletingId(null);
+      setConfirmDeleteId(null);
     }
   };
 
@@ -166,6 +185,7 @@ const AddVehicle = () => {
                   <th className="p-3 text-left">Price</th>
                   <th className="p-3 text-left">Stock</th>
                   <th className="p-3 text-left">Year</th>
+                  <th className="p-3 text-left">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -178,6 +198,15 @@ const AddVehicle = () => {
                     <td className="p-3">{'\u20B9'}{model.price?.toLocaleString('en-IN')}</td>
                     <td className="p-3">{model.stockQuantity}</td>
                     <td className="p-3">{model.year}</td>
+                    <td className="p-3">
+                      <button
+                        onClick={() => setConfirmDeleteId(model.id)}
+                        disabled={deletingId === model.id}
+                        className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 disabled:opacity-50"
+                      >
+                        {deletingId === model.id ? 'Deleting...' : 'Delete'}
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -185,6 +214,16 @@ const AddVehicle = () => {
           </div>
         )}
       </div>
+
+      <ConfirmDialog
+        open={confirmDeleteId !== null}
+        title="Delete Vehicle Model"
+        message="Are you sure you want to delete this vehicle model? This action cannot be undone."
+        onCancel={() => setConfirmDeleteId(null)}
+        onConfirm={() => handleDelete(confirmDeleteId)}
+        confirmText="Delete"
+        loading={deletingId !== null}
+      />
     </div>
   );
 };

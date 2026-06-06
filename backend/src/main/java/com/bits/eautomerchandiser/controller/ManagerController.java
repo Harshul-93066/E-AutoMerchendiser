@@ -22,19 +22,9 @@ public class ManagerController {
         return ResponseEntity.ok(managerService.getAllVehicleModels());
     }
 
-    @PutMapping("/vehicle-models/{id}/price")
-    public ResponseEntity<VehicleModel> updateVehiclePrice(@PathVariable Long id, @RequestBody Map<String, Double> body) {
-        return ResponseEntity.ok(managerService.updateVehiclePrice(id, body.get("price")));
-    }
-
     @GetMapping("/service-categories")
     public ResponseEntity<List<ServiceCategory>> getServiceCategories() {
         return ResponseEntity.ok(managerService.getAllServiceCategories());
-    }
-
-    @PutMapping("/service-categories/{id}/charges")
-    public ResponseEntity<ServiceCategory> updateServiceCharges(@PathVariable Long id, @RequestBody Map<String, Double> body) {
-        return ResponseEntity.ok(managerService.updateServiceCharges(id, body.get("charges")));
     }
 
     @PostMapping("/vehicle-models")
@@ -42,8 +32,20 @@ public class ManagerController {
         return ResponseEntity.ok(managerService.addVehicleModel(model));
     }
 
+    @DeleteMapping("/vehicle-models/{id}")
+    public ResponseEntity<Map<String, String>> deleteVehicleModel(@PathVariable Long id) {
+        managerService.deleteVehicleModel(id);
+        return ResponseEntity.ok(Map.of("message", "Vehicle model deleted successfully"));
+    }
+
     @PostMapping("/service-categories")
     public ResponseEntity<ServiceCategory> addServiceCategory(@RequestBody ServiceCategory category) {
         return ResponseEntity.ok(managerService.addServiceCategory(category));
+    }
+
+    @DeleteMapping("/service-categories/{id}")
+    public ResponseEntity<Map<String, String>> deleteServiceCategory(@PathVariable Long id) {
+        managerService.deleteServiceCategory(id);
+        return ResponseEntity.ok(Map.of("message", "Service category deleted successfully"));
     }
 }

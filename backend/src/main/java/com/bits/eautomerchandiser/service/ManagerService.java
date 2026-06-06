@@ -10,10 +10,10 @@ public interface ManagerService {
     // Vehicle Model operations
     List<VehicleModel> getAllVehicleModels();
     VehicleModel addVehicleModel(VehicleModel model);
-    VehicleModel updateVehiclePrice(Long id, Double price);
+    void deleteVehicleModel(Long id);
     
     // Service Category operations
     List<ServiceCategory> getAllServiceCategories();
     ServiceCategory addServiceCategory(ServiceCategory category);
-    ServiceCategory updateServiceCharges(Long id, Double charges);
+    void deleteServiceCategory(Long id);
 }
